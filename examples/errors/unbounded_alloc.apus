@@ -1,0 +1,7 @@
+// expect: E0412
+arena Frame(4096);
+
+fn main() io {
+    let n = io::read_u32();                    // anything up to 4 billion
+    let buf = alloc(Frame, n as u64);          // no provable bound
+}

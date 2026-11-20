@@ -1,0 +1,15 @@
+// Mixed static/dynamic strings: only the user's input survives as a runtime
+// value; every other byte is a compile-time constant.
+const GREETING: StaticStr = "Hello";
+
+fn banner(name: Str<32>, times: u32 in 1..=3) io {
+    for i in 0..times {
+        io::println(GREETING ++ ", " ++ name ++ " (" ++ str(i + 1) ++ "/" ++ str(times) ++ ")");
+    }
+}
+
+fn main() io {
+    let name = io::read_line(32);
+    let n = io::read_u32();
+    banner(name, clamp(n, 1, 3));
+}

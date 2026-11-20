@@ -1,0 +1,6 @@
+// expect: E0102
+pure fn log(x: u32) -> u32 {
+    io::println("logging");                    // a pure fn cannot perform I/O
+    return x;
+}
+fn main() io { let y = log(1); }

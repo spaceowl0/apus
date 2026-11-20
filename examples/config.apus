@@ -1,0 +1,12 @@
+// Build-time configuration: try  apus run -D DEBUG=true -D BUF=32 -D LEVEL=9 examples/config.apus
+const DEBUG: bool = false;
+const BUF: u32 = 8;
+const LEVEL: u32 = 2;
+fn main() io {
+    static_assert(BUF >= 4, "BUF must be at least 4");
+    static_print("building with BUF=" ++ str(BUF));
+    let buf = [0; BUF];
+    if DEBUG { io::println("debug on"); }
+    match LEVEL { 0 => io::println("quiet"), 1 | 2 => io::println("normal"), _ => io::println("loud") }
+    io::println("buffer length " ++ str(len(buf)));
+}

@@ -1,0 +1,10 @@
+// expect: E0412
+// The compiler refuses to build a program whose memory budget can be exceeded.
+arena Frame(4096);
+
+struct Packet { id: u16, payload: [u8; 512] }
+
+fn main() io {
+    let n = clamp(io::read_u32(), 0, 8);
+    let packets = alloc(Frame, n as u64 * sizeof(Packet));   // up to 8 * 514 = 4112 > 4096
+}

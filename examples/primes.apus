@@ -1,0 +1,21 @@
+// A sieve of Eratosthenes that runs entirely inside the compiler.
+// The residual program is a single write of a constant string.
+pure fn count_primes_below(limit: u32 in 2..=1000) -> u32 {
+    let mut composite = [false; 1000];
+    let mut count: u32 = 0;
+    for i in 2..limit {
+        if !composite[i as u64] {
+            count += 1;
+            let mut j = i * i;
+            while j < limit bound(1000) {
+                composite[j as u64] = true;
+                j += i;
+            }
+        }
+    }
+    return count;
+}
+
+fn main() io {
+    io::println("primes below 1000: " ++ str(static count_primes_below(1000)));
+}

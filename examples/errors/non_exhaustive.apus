@@ -1,0 +1,10 @@
+// expect: E0309
+enum Color { Red, Green, Blue }
+
+fn main() io {
+    let c = Color::Green;
+    match c {
+        Color::Red => io::println("red"),
+        Color::Green => io::println("green"),
+    }
+}

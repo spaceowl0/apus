@@ -1,0 +1,29 @@
+// CRC-32 with the lookup table generated at compile time (1 KB of read-only data,
+// zero initialisation code) and the checksum of a literal computed by the compiler.
+pure fn make_table() -> [u32; 256] {
+    let mut t: [u32; 256] = [0; 256];
+    for i in 0..256 {
+        let mut c: u32 = i as u32;
+        for k in 0..8 {
+            if c & 1 == 1 { c = 3988292384 ^ (c >> 1); } else { c = c >> 1; }
+        }
+        t[i] = c;
+    }
+    return t;
+}
+
+const TABLE: [u32; 256] = make_table();
+
+pure fn crc32(s: Str<64>) -> u32 {
+    let mut crc: u32 = 0xFFFFFFFF;
+    for i in 0..len(s) {
+        crc = TABLE[((crc ^ (s[i as u64] as u32)) & 255) as u64] ^ (crc >> 8);
+    }
+    return crc ^ 0xFFFFFFFF;
+}
+
+fn main() io {
+    io::println("crc32(hello) = " ++ str(static crc32("hello")));
+    let line = io::read_line(32);
+    io::println("crc32(input) = " ++ str(crc32(line)));
+}

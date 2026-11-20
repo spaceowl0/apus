@@ -1,0 +1,5 @@
+// expect: E0101
+fn main() io {
+    let n = io::read_u32();
+    io::println(str(static n * 2));            // `static` demands a compile-time value
+}

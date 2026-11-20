@@ -1,0 +1,5 @@
+// expect: E0301
+fn main() io {
+    let big: u32 = 4000000000;
+    io::println(str(big + big));               // overflow detected at compile time
+}

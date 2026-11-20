@@ -1,0 +1,3 @@
+// expect: E0201
+pure fn f(n: u32) -> u32 { return f(n); }      // recursion needs bound(rec = N)
+fn main() io { io::println(str(static f(1))); }

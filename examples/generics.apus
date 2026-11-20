@@ -1,0 +1,32 @@
+// Generics are instantiated by the compiler: one ordinary function per distinct type or
+// constant argument, each folded and specialized like any other code.
+fn max2<T>(a: T, b: T) -> T {
+    if a > b { return a; }
+    return b;
+}
+
+fn sum<const N: usize>(a: [u32; N]) -> u32 {      // N is inferred from the array's length
+    let mut s: u32 = 0;
+    for i in 0..N { s += a[i]; }
+    return s;
+}
+
+fn fill<T, const N: usize>(v: T) -> [T; N] {      // explicit arguments: fill::<u8, 4>(7)
+    let r: [T; N] = [v; N];
+    return r;
+}
+
+pure fn fact<T>(n: T) -> T bound(rec = 20) {      // generic recursion, evaluated at compile time
+    if n <= 1 { return 1; }
+    return n * fact::<T>(n - 1);
+}
+
+fn main() io {
+    let x = io::read_i32();
+    let y = io::read_i32();
+    let small: u8 = 7;
+    io::println(str(max2(x, y)) ++ " " ++ str(max2(small, 200)));   // max2<i32> and max2<u8>
+    let k = clamp(io::read_u32(), 0, 100);
+    io::println(str(sum([k, 2, 3])) ++ " " ++ str(len(fill::<u8, 4>(7))));
+    io::println(str(static fact::<u64>(20)));
+}

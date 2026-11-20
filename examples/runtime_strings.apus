@@ -1,0 +1,10 @@
+// Runtime strings are first class: build them with ++ (numbers included), measure, index and compare them.
+fn main() io {
+    let name = io::read_line(8);
+    let other = io::read_line(8);
+    let tag = "user-" ++ name ++ "#" ++ str(len(name));        // built once into a buffer, reused below
+    io::println(tag);
+    io::println("length " ++ str(len(tag)) ++ ", last byte " ++ str(tag[len(tag) - 1] as u32));
+    if name == other { io::println("same name"); }
+    if tag == "user-bob#3" { io::println("it's bob"); }
+}

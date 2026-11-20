@@ -1,0 +1,19 @@
+// Memory is a compile-time budget. The compiler proves the arena never overflows:
+// 4 packets * 514 bytes + 1024 scratch = 3080 <= 4096.
+//   apus report examples/arena.apus      -> arena Frame ... high-water 3080
+arena Frame(4096);
+
+struct Packet {
+    id: u16,
+    payload: [u8; 512],
+}
+
+fn main() io {
+    let count = io::read_u32();
+    let n = clamp(count, 0, 4);              // dynamic input becomes a bounded value
+    region Frame {                           // everything allocated here is freed at the closing brace
+        let packets = alloc(Frame, n as u64 * sizeof(Packet));
+        let scratch = alloc(Frame, 1024);
+        io::println("accepted " ++ str(n) ++ " packets");
+    }
+}

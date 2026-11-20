@@ -1,0 +1,16 @@
+// A sorting network on runtime data. The array lives in registers while its
+// contents are statically indexed, and moves to memory only when it must.
+fn main() io {
+    let mut a = [0; 5];
+    for i in 0..5 { a[i] = io::read_i32(); }
+    for pass in 0..4 {
+        for j in 0..4 {
+            if a[j] > a[j + 1] {
+                let t = a[j];
+                a[j] = a[j + 1];
+                a[j + 1] = t;
+            }
+        }
+    }
+    for i in 0..5 { io::println(str(a[i])); }
+}

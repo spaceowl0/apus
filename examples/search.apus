@@ -1,0 +1,23 @@
+// `return` from inside loops of an inlined function: the first match ends the unrolled loop,
+// the runtime loop and the function. Everything after it is skipped by a flag.
+fn find(a: [i32; 6], x: i32) -> i32 {
+    for i in 0..6 {
+        if a[i] == x { return i; }
+    }
+    return -1;
+}
+
+fn first_square_over(limit: u32, n: u32) -> i32 {
+    for i in 0..n {
+        if i * i > limit { return i as i32; }
+    }
+    return -1;
+}
+
+fn main() io {
+    let a = [io::read_i32(), io::read_i32(), io::read_i32(), io::read_i32(), io::read_i32(), io::read_i32()];
+    let x = io::read_i32();
+    io::println("index of x: " ++ str(find(a, x)));
+    let limit = io::read_u32();
+    io::println("first square over limit: " ++ str(first_square_over(limit, clamp(io::read_u32(), 0, 50))));
+}

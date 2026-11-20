@@ -1,0 +1,358 @@
+/* Apus runtime support. Tiny; with -DAPUS_FREESTANDING it needs no libc at all
+ * (raw Linux syscalls on x86-64 and AArch64, and a custom _start). */
+#include <stddef.h>
+#pragma clang fp contract(off)
+
+#ifdef APUS_FREESTANDING
+#if defined(__x86_64__)
+static long sys3(long n, long a, long b, long c) {
+    long r;
+    __asm__ volatile("syscall" : "=a"(r) : "a"(n), "D"(a), "S"(b), "d"(c) : "rcx", "r11", "memory");
+    return r;
+}
+#define SYS_READ 0
+#define SYS_WRITE 1
+#define SYS_EXIT 60
+#elif defined(__aarch64__)
+static long sys3(long n, long a, long b, long c) {
+    register long x8 __asm__("x8") = n;
+    register long x0 __asm__("x0") = a;
+    register long x1 __asm__("x1") = b;
+    register long x2 __asm__("x2") = c;
+    __asm__ volatile("svc 0" : "+r"(x0) : "r"(x8), "r"(x1), "r"(x2) : "memory");
+    return x0;
+}
+#define SYS_READ 63
+#define SYS_WRITE 64
+#define SYS_EXIT 93
+#elif defined(__riscv) && __riscv_xlen == 64
+static long sys3(long n, long a, long b, long c) {
+    register long a7 __asm__("a7") = n;
+    register long a0 __asm__("a0") = a;
+    register long a1 __asm__("a1") = b;
+    register long a2 __asm__("a2") = c;
+    __asm__ volatile("ecall" : "+r"(a0) : "r"(a7), "r"(a1), "r"(a2) : "memory");
+    return a0;
+}
+#define SYS_READ 63
+#define SYS_WRITE 64
+#define SYS_EXIT 93
+#else
+#error "freestanding runtime supports x86_64, aarch64 and riscv64 Linux"
+#endif
+static long a_read(int fd, void *b, unsigned long n) { return sys3(SYS_READ, fd, (long)b, (long)n); }
+static long a_write(int fd, const void *b, unsigned long n) { return sys3(SYS_WRITE, fd, (long)b, (long)n); }
+static void a_exit(int c) { for (;;) sys3(SYS_EXIT, c, 0, 0); }
+
+extern int main(void);
+void apus_start(void) { a_exit(main()); }
+__attribute__((naked, used)) void _start(void) {
+#if defined(__x86_64__)
+    __asm__ volatile("xor %ebp, %ebp\n and $-16, %rsp\n call apus_start\n");
+#elif defined(__aarch64__)
+    __asm__ volatile("mov x29, #0\n mov x30, #0\n mov x0, sp\n and sp, x0, #-16\n bl apus_start\n");
+#else
+    __asm__ volatile("li ra, 0\n andi sp, sp, -16\n call apus_start\n");
+#endif
+}
+
+/* The compiler may lower array copies/fills to these. Kept naive on purpose. */
+#pragma clang optimize off
+void *memcpy(void *d, const void *s, unsigned long n) {
+    char *dd = d; const char *ss = s;
+    while (n--) *dd++ = *ss++;
+    return d;
+}
+void *memset(void *d, int c, unsigned long n) {
+    char *dd = d;
+    while (n--) *dd++ = (char)c;
+    return d;
+}
+void *memmove(void *d, const void *s, unsigned long n) {
+    char *dd = d; const char *ss = s;
+    if (dd < ss) { while (n--) *dd++ = *ss++; }
+    else { dd += n; ss += n; while (n--) *--dd = *--ss; }
+    return d;
+}
+#pragma clang optimize on
+#else
+#include <unistd.h>
+static long a_read(int fd, void *b, unsigned long n) { return read(fd, b, n); }
+static long a_write(int fd, const void *b, unsigned long n) { return write(fd, b, n); }
+static void a_exit(int c) { _exit(c); }
+#endif
+
+__attribute__((optnone)) int apus_memeq(const char *a, const char *b, long n) {
+    for (long i = 0; i < n; i++)
+        if (a[i] != b[i]) return 0;
+    return 1;
+}
+
+long apus_fmt_dec(char *dst, unsigned long v, int is_signed) {
+    char tmp[24];
+    int i = 24;
+    long n = 0;
+    int neg = 0;
+    if (is_signed && (long)v < 0) {
+        neg = 1;
+        v = 0UL - v;
+    }
+    do {
+        tmp[--i] = (char)('0' + v % 10);
+        v /= 10;
+    } while (v);
+    if (neg) tmp[--i] = '-';
+    while (i < 24) dst[n++] = tmp[i++];
+    return n;
+}
+
+static char obuf[4096];
+static unsigned long olen;
+static char ibuf[4096];
+static long ipos, ilen;
+
+static void wr(int fd, const char *p, unsigned long n) {
+    while (n) {
+        long k = a_write(fd, p, n);
+        if (k <= 0) return;
+        p += k;
+        n -= (unsigned long)k;
+    }
+}
+
+void apus_flush(void) {
+    if (olen) wr(1, obuf, olen);
+    olen = 0;
+}
+
+void apus_write(const char *p, long n) {
+    if ((unsigned long)n >= sizeof obuf) {
+        apus_flush();
+        wr(1, p, (unsigned long)n);
+        return;
+    }
+    if (olen + (unsigned long)n > sizeof obuf) apus_flush();
+    for (long i = 0; i < n; i++) obuf[olen++] = p[i];
+}
+
+void apus_write_dec(unsigned long v, int is_signed) {
+    char tmp[24];
+    int i = 24;
+    int neg = 0;
+    if (is_signed && (long)v < 0) {
+        neg = 1;
+        v = 0UL - v;
+    }
+    do {
+        tmp[--i] = (char)('0' + v % 10);
+        v /= 10;
+    } while (v);
+    if (neg) tmp[--i] = '-';
+    apus_write(tmp + i, 24 - i);
+}
+
+static int getb(void) {
+    if (ipos >= ilen) {
+        ilen = a_read(0, ibuf, sizeof ibuf);
+        ipos = 0;
+        if (ilen <= 0) {
+            ilen = 0;
+            return -1;
+        }
+    }
+    return (unsigned char)ibuf[ipos++];
+}
+
+long apus_read_line(char *buf, long cap) {
+    long n = 0;
+    int c;
+    while ((c = getb()) >= 0 && c != '\n') {
+        if (n < cap) buf[n++] = (char)c;
+    }
+    return n;
+}
+
+static const char *trap_msg(int code) {
+    switch (code) {
+    case 1: return "arithmetic overflow";
+    case 2: return "division by zero";
+    case 3: return "index out of bounds";
+    case 4: return "loop bound exceeded";
+    case 5: return "require failed";
+    case 6: return "shift amount out of range";
+    case 7: return "invalid input";
+    }
+    return "trap";
+}
+
+void apus_trap(int code) {
+    const char *m = trap_msg(code);
+    unsigned long n = 0;
+    apus_flush();
+    while (m[n]) n++;
+    wr(2, "apus: runtime trap: ", 20);
+    wr(2, m, n);
+    wr(2, "\n", 1);
+    a_exit(101);
+}
+
+unsigned long apus_read_int(int bits, int is_signed) {
+    int c;
+    int neg = 0;
+    unsigned long mag = 0;
+    do {
+        c = getb();
+        if (c < 0) apus_trap(7);
+    } while (c == ' ' || c == '\t' || c == '\r' || c == '\n');
+    if (c == '-') {
+        if (!is_signed) apus_trap(7);
+        neg = 1;
+        c = getb();
+        if (c < 0) apus_trap(7);
+    }
+    if (c < '0' || c > '9') apus_trap(7);
+    for (;;) {
+        unsigned long d = (unsigned long)(c - '0');
+        if (mag > (~0UL - d) / 10) apus_trap(7);
+        mag = mag * 10 + d;
+        c = getb();
+        if (c < '0' || c > '9') {
+            if (c >= 0) ipos--;
+            break;
+        }
+    }
+    if (is_signed) {
+        unsigned long maxs = bits >= 64 ? 0x7fffffffffffffffUL : (1UL << (bits - 1)) - 1;
+        if (neg) {
+            if (mag > maxs + 1) apus_trap(7);
+            return 0UL - mag;
+        }
+        if (mag > maxs) apus_trap(7);
+        return mag;
+    }
+    unsigned long maxu = bits >= 64 ? ~0UL : (1UL << bits) - 1;
+    if (mag > maxu) apus_trap(7);
+    return mag;
+}
+
+/* ---- floating point: identical algorithms to ir.FormatFloat / ir.ReadFloatFrom ---- */
+static const double POW10[16] = {1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15};
+
+static double bits_to_double(unsigned long bits, int is32) {
+    if (is32) {
+        union { unsigned int u; float f; } x;
+        x.u = (unsigned int)bits;
+        return (double)x.f;
+    }
+    union { unsigned long u; double d; } y;
+    y.u = bits;
+    return y.d;
+}
+
+long apus_fmt_f64(char *dst, unsigned long bits, int is32) {
+    double v = bits_to_double(bits, is32);
+    long n = 0;
+    if (v != v) {
+        dst[0] = 'n'; dst[1] = 'a'; dst[2] = 'n';
+        return 3;
+    }
+    if (v > 1.7976931348623157e308) {
+        dst[0] = 'i'; dst[1] = 'n'; dst[2] = 'f';
+        return 3;
+    }
+    if (v < -1.7976931348623157e308) {
+        dst[0] = '-'; dst[1] = 'i'; dst[2] = 'n'; dst[3] = 'f';
+        return 4;
+    }
+    double a = v < 0 ? -v : v;
+    double y = a * 1000000.0;
+    if (!(y < 9007199254740992.0)) {
+        if (v < 0) dst[n++] = '-';
+        dst[n++] = 'b'; dst[n++] = 'i'; dst[n++] = 'g';
+        return n;
+    }
+    double r = y >= 4503599627370496.0 ? y : (y + 4503599627370496.0) - 4503599627370496.0;
+    unsigned long m = (unsigned long)r;
+    if (v < 0 && m != 0) dst[n++] = '-';
+    n += apus_fmt_dec(dst + n, m / 1000000UL, 0);
+    dst[n++] = '.';
+    unsigned long fr = m % 1000000UL;
+    for (int i = 5; i >= 0; i--) {
+        dst[n + i] = (char)('0' + fr % 10);
+        fr /= 10;
+    }
+    return n + 6;
+}
+
+void apus_write_f64(unsigned long bits, int is32) {
+    char tmp[40];
+    long n = apus_fmt_f64(tmp, bits, is32);
+    apus_write(tmp, n);
+}
+
+unsigned long apus_read_f64(int is32) {
+    int c, neg = 0, digits = 0, frac = 0, seen = 0;
+    unsigned long n = 0;
+    do {
+        c = getb();
+        if (c < 0) apus_trap(7);
+    } while (c == ' ' || c == '\t' || c == '\r' || c == '\n');
+    if (c == '-') {
+        neg = 1;
+        c = getb();
+        if (c < 0) apus_trap(7);
+    }
+    if (c < '0' || c > '9') apus_trap(7);
+    for (;;) {
+        if (c >= '0' && c <= '9') {
+            if (++digits > 15) apus_trap(7);
+            n = n * 10 + (unsigned long)(c - '0');
+            if (seen) frac++;
+        } else if (c == '.' && !seen) {
+            seen = 1;
+            c = getb();
+            if (c < '0' || c > '9') apus_trap(7);
+            continue;
+        } else {
+            if (c >= 0) ipos--;
+            break;
+        }
+        c = getb();
+        if (c < 0) break;
+    }
+    double v = (double)n / POW10[frac];
+    if (neg) v = -v;
+    if (is32) {
+        union { float f; unsigned int u; } x;
+        x.f = (float)v;
+        return x.u;
+    }
+    union { double d; unsigned long u; } y;
+    y.d = v;
+    return y.u;
+}
+
+/* ---- rounding functions (the compiler's llvm.floor/ceil/trunc may lower to these) ---- */
+__attribute__((optnone)) double trunc(double x) {
+    union { double d; unsigned long u; } v;
+    v.d = x;
+    int e = (int)((v.u >> 52) & 0x7ff) - 1023;
+    if (e >= 52) return x;                       /* already integral, or inf/nan */
+    if (e < 0) {                                 /* |x| < 1: signed zero */
+        v.u &= 0x8000000000000000UL;
+        return v.d;
+    }
+    v.u &= ~(0x000fffffffffffffUL >> e);
+    return v.d;
+}
+__attribute__((optnone)) double floor(double x) {
+    double t = trunc(x);
+    return t > x ? t - 1.0 : t;
+}
+__attribute__((optnone)) double ceil(double x) {
+    double t = trunc(x);
+    return t < x ? t + 1.0 : t;
+}
+__attribute__((optnone)) float truncf(float x) { return (float)trunc((double)x); }
+__attribute__((optnone)) float floorf(float x) { return (float)floor((double)x); }
+__attribute__((optnone)) float ceilf(float x) { return (float)ceil((double)x); }

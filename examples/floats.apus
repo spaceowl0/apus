@@ -1,0 +1,32 @@
+// IEEE-754 floating point (f32 / f64). Arithmetic never traps; NaN and infinity are ordinary values.
+// Everything with constant operands is computed by the compiler with the same arithmetic the hardware uses.
+
+// A sine table built at compile time by a Taylor series, stored as 64 bytes of read-only data.
+pure fn sin_approx(x: f64) -> f64 {
+    let x2 = x * x;
+    let mut term = x;
+    let mut sum = x;
+    for i in 1..5 {
+        term = -term * x2 / (((2 * i) as f64) * ((2 * i + 1) as f64));
+        sum += term;
+    }
+    return sum;
+}
+
+pure fn make_table() -> [f64; 8] {
+    let mut t: [f64; 8] = [0.0; 8];
+    for i in 0..8 { t[i] = sin_approx((i as f64) * 0.25); }
+    return t;
+}
+
+const SIN: [f64; 8] = make_table();
+
+fn main() io {
+    io::println("sin(0.75) = " ++ str(static sin_approx(0.75)));        // folded: just text
+    let x = io::read_f64();                                             // runtime value
+    let k = clamp(io::read_u32(), 0, 7);
+    io::println("table[k] = " ++ str(SIN[k as u64]) ++ ", x*x = " ++ str(x * x) ++ ", sqrt(x) = " ++ str(sqrt(x)));
+    let f: f32 = 0.1;
+    io::println("0.1f + 0.1f + 0.1f = " ++ str(f + f + f));            // single precision, rounded after every op
+    io::println("x as i32 = " ++ str(x as i32));                        // checked: traps if NaN or out of range
+}

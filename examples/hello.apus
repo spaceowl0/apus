@@ -1,0 +1,13 @@
+// Static strings collapse; only the dynamic name survives into the binary.
+const APP: StaticStr = "apus-demo";
+const VERSION: u32 = 1 + 2;
+const DEBUG: bool = false;
+
+fn main() -> i32 io {
+    let name = io::read_line(64);
+    if DEBUG {
+        io::println("debug: got " ++ name);
+    }
+    io::println("[" ++ APP ++ " v" ++ str(VERSION) ++ "] Hello, " ++ name ++ "! " ++ str(2 * 3) ++ " apples.");
+    return 0;
+}

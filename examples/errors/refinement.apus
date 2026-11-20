@@ -1,0 +1,3 @@
+// expect: E0501
+fn index(i: u32 in 0..=9) -> u32 { return i; }
+fn main() io { io::println(str(index(io::read_u32()))); }   // argument not provably within 0..=9

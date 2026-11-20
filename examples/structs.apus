@@ -1,0 +1,13 @@
+// Structs are scalar-replaced: static fields fold away, dynamic fields become
+// plain variables, and passing a struct to a pure function costs nothing.
+struct Vec2 { x: i32, y: i32 }
+
+pure fn dot(a: Vec2, b: Vec2) -> i32 { return a.x * b.x + a.y * b.y; }
+pure fn scale(v: Vec2, k: i32) -> Vec2 { return Vec2 { x: v.x * k, y: v.y * k }; }
+
+fn main() io {
+    let unit = Vec2 { x: 1, y: 0 };
+    let v = Vec2 { x: io::read_i32(), y: io::read_i32() };
+    let w = scale(v, 3);
+    io::println("dot = " ++ str(dot(unit, w)) ++ ", |w|^2 = " ++ str(dot(w, w)));
+}

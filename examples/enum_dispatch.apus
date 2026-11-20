@@ -1,0 +1,21 @@
+// A match on an enum constant selects one arm at compile time; on runtime data it
+// becomes a range-aware chain of ifs in which each arm knows what it was matched against.
+enum Op { Add, Sub, Mul, Div }
+
+pure fn apply(op: Op, a: i32, b: i32) -> i32 {
+    return match op {
+        Op::Add => a + b,
+        Op::Sub => a - b,
+        Op::Mul => a * b,
+        Op::Div => a / b,
+    };
+}
+
+fn main() io {
+    let x = io::read_i32();
+    let y = io::read_i32();
+    io::println(str(apply(Op::Add, x, y)));        // static op: no dispatch code at all
+    let code = clamp(io::read_i32(), 0, 3);
+    let op = match code { 0 => Op::Add, 1 => Op::Sub, 2 => Op::Mul, _ => Op::Div };
+    io::println(str(apply(op, x, y)));
+}

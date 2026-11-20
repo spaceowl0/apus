@@ -1,0 +1,3 @@
+fn main() io {
+    io::println("Hello from Apus, built " ++ str(2026) ++ "!");
+}

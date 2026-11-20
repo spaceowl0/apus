@@ -1,0 +1,23 @@
+// Counts the points of a w x h grid that stay bounded for 100 iterations.
+fn main() io {
+    let w = require(io::read_u32(), 1, 2000);
+    let h = require(io::read_u32(), 1, 2000);
+    let mut inside: u32 = 0;
+    for py in 0..h {
+        for px in 0..w {
+            let cx = (px as f64) / (w as f64) * 3.5 - 2.5;
+            let cy = (py as f64) / (h as f64) * 2.0 - 1.0;
+            let mut x = 0.0;
+            let mut y = 0.0;
+            let mut it: u32 = 0;
+            while x * x + y * y <= 4.0 && it < 100 bound(100) {
+                let t = x * x - y * y + cx;
+                y = 2.0 * x * y + cy;
+                x = t;
+                it += 1;
+            }
+            if it == 100 { inside += 1; }
+        }
+    }
+    io::println(str(inside));
+}

@@ -1,0 +1,29 @@
+// CRC-32 of a line, repeated. The 256-entry table is built by the compiler and
+// lives in .rodata; the hot loop has no overflow or bounds checks.
+pure fn make_table() -> [u32; 256] {
+    let mut t: [u32; 256] = [0; 256];
+    for i in 0..256 {
+        let mut c: u32 = i as u32;
+        for k in 0..8 {
+            if c & 1 == 1 { c = 3988292384 ^ (c >> 1); } else { c = c >> 1; }
+        }
+        t[i] = c;
+    }
+    return t;
+}
+
+const TABLE: [u32; 256] = make_table();
+
+fn main() io {
+    let line = io::read_line(1000);
+    let reps = require(io::read_u32(), 1, 2000000);
+    let mut total: u64 = 0;
+    for r in 0..reps {
+        let mut crc: u32 = 0xFFFFFFFF;
+        for i in 0..len(line) {
+            crc = TABLE[((crc ^ (line[i as u64] as u32)) & 255) as u64] ^ (crc >> 8);
+        }
+        total += (crc ^ 0xFFFFFFFF) as u64;
+    }
+    io::println(str(total));
+}

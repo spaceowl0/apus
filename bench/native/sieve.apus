@@ -1,0 +1,23 @@
+// Sieve of Eratosthenes over a stack array; every store is bounds-checked.
+fn main() io {
+    let n = require(io::read_u32(), 2, 100000);
+    let mut sieve = [true; 100000];
+    sieve[0] = false;
+    sieve[1] = false;
+    let mut i: u32 = 2;
+    while i * i < n bound(400) {
+        if sieve[i as u64] {
+            let mut j = i * i;
+            while j < n bound(100000) {
+                sieve[j as u64] = false;
+                j += i;
+            }
+        }
+        i += 1;
+    }
+    let mut count: u32 = 0;
+    for k in 2..n {
+        if sieve[k as u64] { count += 1; }
+    }
+    io::println(str(count));
+}

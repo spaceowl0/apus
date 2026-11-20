@@ -1,0 +1,11 @@
+// Sum of 1/i^2 (converges to pi^2/6). Integer-to-float conversion, division and accumulation:
+// no checks are needed for floating-point arithmetic, so this is pure FPU work.
+fn main() io {
+    let n = require(io::read_u32(), 1, 1000000000);
+    let mut s = 0.0;
+    for i in 1..n {
+        let x = i as f64;
+        s += 1.0 / (x * x);
+    }
+    io::println(str(s));
+}

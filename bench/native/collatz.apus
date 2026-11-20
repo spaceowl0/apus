@@ -1,0 +1,21 @@
+// Longest Collatz chain below a limit. All arithmetic is overflow-checked.
+fn steps(n0: u64) -> u32 {
+    let mut n = n0;
+    let mut s: u32 = 0;
+    while n != 1 bound(1000) {
+        if n % 2 == 0 { n = n / 2; } else { n = 3 * n + 1; }
+        s += 1;
+    }
+    return s;
+}
+
+fn main() io {
+    let limit = require(io::read_u64(), 2, 5000000);
+    let mut best: u32 = 0;
+    let mut arg: u64 = 1;
+    for n in 1..limit {
+        let s = steps(n);
+        if s > best { best = s; arg = n; }
+    }
+    io::println(str(arg) ++ " " ++ str(best));
+}

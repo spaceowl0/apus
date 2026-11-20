@@ -1,0 +1,32 @@
+// run: "0\n" => "ab!\ncd!\nef!\n1234 100 15 3 12\n"
+// run: "7\n" => "ab!\ncd!\nef!\n1234 100 22 24 26\n"
+struct P { x: u32, y: u32 }
+
+fn weigh(ws: [u32; 4], extra: u32) -> u32 {
+    let mut t: u32 = 0;
+    for w in ws { t += w * extra; }
+    return t;
+}
+
+fn main() io {
+    let n = io::read_u32();
+    let mut a: [u32; 4] = [1, 2, 3, 4];
+    let mut seen: u32 = 0;
+    // mutating the array inside the loop does not change what is iterated
+    for v in a {
+        a[3] = 100;
+        seen = seen * 10 + v;
+    }
+    let grid = [[1, 2], [3, 4], [5, n as i32]];
+    let mut gs: i32 = 0;
+    for row in grid {
+        for c in row { gs += c; }
+    }
+    let ps = [P { x: 1, y: n }; 3];
+    let mut py: u32 = 0;
+    for p in ps { py += p.x + p.y; }
+    let names: [Str<4>; 3] = ["ab", "cd", "ef"];
+    let mut joined: Str<16> = "";
+    for s in names { io::println(s ++ "!"); }
+    io::println(str(seen) ++ " " ++ str(a[3]) ++ " " ++ str(gs) ++ " " ++ str(py) ++ " " ++ str(weigh([1, 2, 3, n], 2)));
+}

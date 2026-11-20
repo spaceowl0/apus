@@ -1,0 +1,12 @@
+// run: "20\n" => "40 99\n"
+// run: "3\n" => "-3 100\n"
+// run: "-5\n" => "5 100\n"
+// run: "2147483647\n" => "" trap=arithmetic overflow
+// run: "-2147483648\n" => "" trap=arithmetic overflow
+fn main() io {
+    let x = io::read_i32();
+    let mut y = 0;
+    let mut z = 100;
+    if x > 10 { y = x * 2; z = z - 1; } else { y = -x; }
+    io::println(str(y) ++ " " ++ str(z));
+}

@@ -1,0 +1,10 @@
+// run: "-7 2\n" => "-3 -1\n"
+// run: "7 -2\n" => "-3 1\n"
+// run: "-7 -2\n" => "3 -1\n"
+// run: "-2147483648 -1\n" => "" trap=arithmetic overflow
+// run: "5 0\n" => "" trap=division by zero
+fn main() io {
+    let a = io::read_i32();
+    let b = io::read_i32();
+    io::println(str(a / b) ++ " " ++ str(a % b));
+}

@@ -1,0 +1,12 @@
+// run: "1\n" => "32\n1\n"
+// run: "2147483648\n" => "16\n2147483648\n"
+// run: "12345\n" => "395040\n12350\n"
+fn rotl32(x: u32, k: u32 in 1..=31) -> u32 {
+    return (x << k) | (x >> (32 - k));
+}
+
+fn main() io {
+    let x = io::read_u32();
+    io::println(str(rotl32(x, 5)));
+    io::println(str(x ^ (x >> 3) & 255));
+}

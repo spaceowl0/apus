@@ -1,0 +1,14 @@
+// run: "ab\nab\n" => "same\n7 105 50\nmatch\n"
+// run: "ab\nxy\n" => "different\n7 105 50\nmatch\n"
+// run: "\n\n" => "same\n5 105 48\n"
+// run: "abcdefgh\nabcdefgh\n" => "same\n13 105 56\n"
+// run: "abc\nabd\n" => "different\n8 105 51\n"
+// run: "abc\nabc\n" => "same\n8 105 51\n"
+fn main() io {
+    let a = io::read_line(8);
+    let b = io::read_line(8);
+    if a == b { io::println("same"); } else { io::println("different"); }
+    let msg = "id-" ++ a ++ "#" ++ str(len(a));
+    io::println(str(len(msg)) ++ " " ++ str(msg[0] as u32) ++ " " ++ str(msg[len(msg) - 1] as u32));
+    if msg == "id-ab#2" { io::println("match"); }
+}

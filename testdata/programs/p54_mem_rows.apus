@@ -1,0 +1,17 @@
+// run: "0 1 2 1\n" => "0 9 7 | 0 0 8 | 0 0 0 | 0 0\n"
+// run: "2 2 0 2\n" => "7 0 0 | 0 0 0 | 0 0 8 | 0 8\n"
+// run: "1 0 1 3\n" => "" trap=index out of bounds
+fn main() io {
+    let mut g: [[u32; 3]; 3] = [[0; 3]; 3];
+    let a = io::read_u32();
+    let b = io::read_u32();
+    let c = io::read_u32();
+    let d = io::read_u32();
+    // a dynamic column write makes the rows memory-backed
+    g[0][c as u64] = 7;
+    // then a dynamic row index, both with a constant and a dynamic column
+    g[a as u64][b as u64] = 9;
+    g[d as u64][2] = 8;
+    let r = g[b as u64];
+    io::println(str(g[0][0]) ++ " " ++ str(g[0][1]) ++ " " ++ str(g[0][2]) ++ " | " ++ str(g[1][0]) ++ " " ++ str(g[1][1]) ++ " " ++ str(g[1][2]) ++ " | " ++ str(g[2][0]) ++ " " ++ str(g[2][1]) ++ " " ++ str(g[2][2]) ++ " | " ++ str(r[0]) ++ " " ++ str(r[b as u64]));
+}

@@ -1,0 +1,30 @@
+// run: "0\n" => "0.000000 1.363278\n"
+// run: "1\n" => "0.247404 1.363278\n"
+// run: "3\n" => "0.681639 1.363278\n"
+// run: "7\n" => "0.983998 1.363278\n"
+// run: "99\n" => "0.983998 1.363278\n"
+// A sine table built by a compile-time Taylor series (floating-point loops run in the compiler)
+// and stored as read-only data.
+pure fn sin_approx(x: f64) -> f64 {
+    let x2 = x * x;
+    let mut term = x;
+    let mut sum = x;
+    for i in 1..5 {
+        term = -term * x2 / (((2 * i) as f64) * ((2 * i + 1) as f64));
+        sum += term;
+    }
+    return sum;
+}
+
+pure fn make_table() -> [f64; 8] {
+    let mut t: [f64; 8] = [0.0; 8];
+    for i in 0..8 { t[i] = sin_approx((i as f64) * 0.25); }
+    return t;
+}
+
+const SIN: [f64; 8] = make_table();
+
+fn main() io {
+    let k = clamp(io::read_u32(), 0, 7);
+    io::println(str(SIN[k as u64]) ++ " " ++ str(SIN[3] * 2.0));
+}

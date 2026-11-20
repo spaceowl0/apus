@@ -1,0 +1,19 @@
+// run: "6 4\n" => "23\n"
+// run: "0 3\n" => "99\n"
+// run: "2 4\n" => "12\n"
+// run: "7 4\n" => "99\n"
+// Returns from nested runtime loops end both loops and skip the rest of the function.
+fn search(a: u32, b: u32) -> u32 {
+    for i in 0..clamp(a, 0, 6) {
+        for j in 0..clamp(b, 0, 4) {
+            if i * j == a { return i * 10 + j; }
+        }
+    }
+    return 99;
+}
+
+fn main() io {
+    let a = io::read_u32();
+    let b = io::read_u32();
+    io::println(str(search(a, b)));
+}

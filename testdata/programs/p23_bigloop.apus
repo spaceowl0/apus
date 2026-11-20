@@ -1,0 +1,6 @@
+// run: "" => "499500\n"
+fn main() io {
+    let mut s: u64 = 0;
+    for i in 0..1000 { s += i as u64; }
+    io::println(str(s));
+}

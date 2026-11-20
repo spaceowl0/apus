@@ -1,0 +1,50 @@
+// run: "3 4\n" => "a=3,0 snap=0,0 big=1000:7 sum=66 f=12 held=9 r=1,2 post=3,0\n"
+// run: "0 1\n" => "a=1,0 snap=0,0 big=1000:7 sum=66 f=9 held=9 r=1,2 post=1,0\n"
+// run: "2 3\n" => "a=0,0 snap=0,0 big=1000:7 sum=66 f=11 held=9 r=1,2 post=0,0\n"
+// run: "9 1\n" => "" trap=index out of bounds
+struct P { x: u32, y: u32 }
+struct Holder { items: [P; 4], tag: u32 }
+
+fn bump(src: [P; 4], k: u64) -> [P; 4] {
+    let mut ps = src;
+    ps[k].x = ps[k].x + 10;
+    return ps;
+}
+
+fn pick(ps: [P; 4], k: u64) -> P {
+    if ps[k].x > 5 { return P { x: ps[k].x, y: 1 }; }
+    return ps[0];
+}
+
+fn total(ps: [P; 4]) -> u32 {
+    let mut t: u32 = 0;
+    for i in 0..4 { t += ps[i].x + ps[i].y; }
+    return t;
+}
+
+fn main() io {
+    let a = io::read_u32();
+    let b = io::read_u32();
+    let mut ps: [P; 4] = [P { x: 0, y: 0 }; 4];
+    let snap = ps;
+    ps[a as u64].x = b;
+    ps[b as u64 - 1].y = a;
+    let mut big: [P; 1000] = [P { x: 0, y: 0 }; 1000];
+    let mut i: u32 = 0;
+    while i < 1000 bound(1000) {
+        big[(i * 7 % 1000) as u64].x = i % 3;
+        i += 1;
+    }
+    big[999] = P { x: 7, y: 7 };
+    let mut h = Holder { items: [P { x: 9, y: 9 }; 4], tag: 0 };
+    h.items[a as u64 % 4].y = 4;
+    let moved = bump(ps, a as u64);
+    let r = pick(moved, a as u64);
+    if a > 2 { ps = snap; ps[1] = P { x: 5, y: 3 }; ps[0] = P { x: a, y: 0 }; }
+    if a < 2 { ps[0].x = b; ps[0].y = 0; }
+    io::println("a=" ++ str(ps[0].x) ++ "," ++ str(ps[0].y) ++ " snap=" ++ str(snap[0].x) ++ "," ++ str(snap[a as u64 % 4].y)
+        ++ " big=" ++ str(len(big)) ++ ":" ++ str(big[999].x)
+        ++ " sum=" ++ str(total(h.items) - h.items[a as u64 % 4].y + 4 - 1 + 0 * big[3].x)
+        ++ " f=" ++ str(moved[a as u64].x - 2) ++ " held=" ++ str(h.items[(a as u64 + 1) % 4].x)
+        ++ " r=" ++ str(r.y) ++ "," ++ str(2) ++ " post=" ++ str(ps[0].x) ++ "," ++ str(ps[0].y));
+}

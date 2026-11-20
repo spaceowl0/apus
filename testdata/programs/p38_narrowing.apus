@@ -1,0 +1,15 @@
+// run: "5\n" => "20\n5\nbig\n"
+// run: "0\n" => "non-positive\n0\n10\n"
+// run: "-4\n" => "non-positive\n"
+// run: "2\n" => "50\n2\n30\nbig\n"
+// run: "1000\n" => "0\n1000\n"
+fn main() io {
+    let x = io::read_i32();
+    if x > 0 { io::println(str(100 / x)); } else { io::println("non-positive"); }
+    if x < 0 { return; }
+    let y = x as u32;
+    io::println(str(y));
+    let t = [10, 20, 30];
+    if x < 3 { io::println(str(t[x as u64])); }
+    if x > 0 && 100 / x > 3 { io::println("big"); }
+}

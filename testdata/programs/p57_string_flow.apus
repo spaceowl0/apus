@@ -1,0 +1,34 @@
+// run: "0\n" => "n=0|x0|zzzzbc|quietHEY\n"
+// run: "1\n" => "n=1|x0|azzzzc|HEYok\n"
+// run: "2\n" => "n=2|twelve!!2|abzzzz|HEYok\n"
+// run: "7\n" => "huge|twelve!!7|abc|HEYok\n"
+struct Tag { name: Str<8>, n: u32 }
+
+fn label(n: u32) -> Str<8> {
+    if n > 5 { return "huge"; }
+    let mut i: u32 = 0;
+    while i < 4 bound(4) {
+        if i == n { return "n=" ++ str(i as u8); }
+        i += 1;
+    }
+    return "none";
+}
+
+fn shout(s: Str<6>, loud: bool) -> Str<6> {
+    let mut t = s;
+    if loud { t = "HEY"; }
+    return t;
+}
+
+fn main() io {
+    let a = io::read_u32();
+    let mut tag = Tag { name: "x", n: 0 };
+    if a > 1 { tag.name = "twelve!!"; tag.n = a; }
+    let mut names: [Str<4>; 3] = ["a", "b", "c"];
+    let mut i: u32 = 0;
+    while i < 3 bound(3) {
+        if i == a { names[i as u64] = "zzzz"; }
+        i += 1;
+    }
+    io::println(label(a) ++ "|" ++ tag.name ++ str(tag.n) ++ "|" ++ names[0] ++ names[1] ++ names[2] ++ "|" ++ shout("quiet", a > 0) ++ shout("ok", a == 0));
+}

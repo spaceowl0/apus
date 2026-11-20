@@ -1,0 +1,15 @@
+// run: "6\n" => "43 31\n"
+// run: "3\n" => "0 9\n"
+// run: "0\n" => "0 0\n"
+fn main() io {
+    let n = clamp(io::read_u32(), 0, 6);
+    let mut found: u32 = 0;
+    let mut count: u32 = 0;
+    for a in 0..n {
+        for b in 0..n {
+            if a * b == 12 { found = a * 10 + b; break; }
+            count += 1;
+        }
+    }
+    io::println(str(found) ++ " " ++ str(count));
+}

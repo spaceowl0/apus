@@ -1,0 +1,13 @@
+// run: "0\n" => "10\n"
+// run: "3\n" => "40\n"
+// run: "4\n" => "" trap=require failed
+// run: "7\n" => "" trap=require failed
+const W: [u32; 4] = [10, 20, 30, 40];
+const N: usize = 4;
+
+fn main() io {
+    let i = io::read_u32();
+    io::println(str(W[require(i, 0, 3) as u64]));
+    static_assert(N == 4);
+    static_assert(len(W) == 4);
+}

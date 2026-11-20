@@ -1,0 +1,11 @@
+// run: "" => "255 -32768 64 8\n"
+// insts<=2
+struct Header { tag: u8, len: u32, flags: u16 }
+
+fn main() io {
+    static_assert(sizeof(Header) == 12);
+    static_assert(offsetof(Header, len) == 4);
+    static_assert(offsetof(Header, flags) == 8);
+    static_assert(alignof(Header) == 4);
+    io::println(str(max_of(u8)) ++ " " ++ str(min_of(i16)) ++ " " ++ str(bits_of(u64)) ++ " " ++ str(offsetof(Header, flags)));
+}

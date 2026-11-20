@@ -1,0 +1,45 @@
+// run: "5 9\n10\n" => "9\n200\n4\n15\n4 7\n16 64\n3628800 2432902008176640000\n0 0\n"
+// run: "-3 -8\n100\n" => "-3\n200\n4\n105\n4 7\n16 64\n3628800 2432902008176640000\n0 0\n"
+// Generic functions are instantiated once per distinct type / const argument.
+fn max2<T>(a: T, b: T) -> T {
+    if a > b { return a; }
+    return b;
+}
+
+fn sum<const N: usize>(a: [u32; N]) -> u32 {
+    let mut s: u32 = 0;
+    for i in 0..N { s += a[i]; }
+    return s;
+}
+
+fn fill<T, const N: usize>(v: T) -> [T; N] {
+    let r: [T; N] = [v; N];
+    return r;
+}
+
+fn bits<T>() -> u64 { return bits_of(T); }
+
+fn zero<T>() -> T { return 0; }
+
+pure fn fact<T>(n: T) -> T bound(rec = 20) {
+    if n <= 1 { return 1; }
+    return n * fact::<T>(n - 1);
+}
+
+fn main() io {
+    let x = io::read_i32();
+    let y = io::read_i32();
+    io::println(str(max2(x, y)));
+    let a: u8 = 200;
+    let b: u8 = 7;
+    io::println(str(max2(a, b)));
+    io::println(str(max2(3, 4)));
+    let k = clamp(io::read_u32(), 0, 100);
+    io::println(str(sum([k, 2, 3])));
+    let f = fill::<u8, 4>(7);
+    io::println(str(len(f)) ++ " " ++ str(f[3]));
+    io::println(str(bits::<u16>()) ++ " " ++ str(bits::<u64>()));
+    io::println(str(static fact(10)) ++ " " ++ str(static fact::<u64>(20)));
+    let z: u8 = zero::<u8>();
+    io::println(str(z) ++ " " ++ str(zero::<i64>()));
+}

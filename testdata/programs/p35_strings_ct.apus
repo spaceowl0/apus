@@ -1,0 +1,25 @@
+// run: "quit\n" => "static hash of apus = 3148110336\ninput hash = 1200064310\nbye\n"
+// run: "abc\n" => "static hash of apus = 3148110336\ninput hash = 440920331\nfirst byte = 97\n"
+// run: "\n" => "static hash of apus = 3148110336\ninput hash = 2166136261\nfirst byte = 0\n"
+const KEY: StaticStr = "apus";
+
+pure fn fnv1a(s: Str<32>) -> u64 {
+    let mut h: u64 = 2166136261;
+    for i in 0..len(s) {
+        h = ((h ^ (s[i as u64] as u64)) * 16777619) & 0xFFFFFFFF;
+    }
+    return h;
+}
+
+fn main() io {
+    let name = io::read_line(8);
+    io::println("static hash of apus = " ++ str(static fnv1a(KEY)));
+    io::println("input hash = " ++ str(fnv1a(name)));
+    if name == "quit" {
+        io::println("bye");
+    } else {
+        let mut first: u32 = 0;
+        if len(name) > 0 { first = name[0] as u32; }
+        io::println("first byte = " ++ str(first));
+    }
+}

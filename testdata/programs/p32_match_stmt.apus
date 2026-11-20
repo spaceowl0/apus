@@ -1,0 +1,17 @@
+// run: "-5 0 2 7 12\n" => "-1\n0\n1\n2\n3\n"
+// run: "2147483647 -2147483648 3 4 9\n" => "3\n-1\n1\n2\n2\n"
+fn bucket(n: i32) -> i32 {
+    match n {
+        min_of(i32)..=-1 => { return -1; }
+        0 => { return 0; }
+        1 | 2 | 3 => { return 1; }
+        4..=9 => { return 2; }
+        10..=max_of(i32) => { return 3; }
+    }
+}
+
+fn main() io {
+    for i in 0..5 {
+        io::println(str(bucket(io::read_i32())));
+    }
+}

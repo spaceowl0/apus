@@ -1,0 +1,11 @@
+// run: "" => "9\n"
+// insts<=2
+pure fn ack(m: u32, n: u32) -> u32 bound(rec = 1000) {
+    if m == 0 { return n + 1; }
+    if n == 0 { return ack(m - 1, 1); }
+    return ack(m - 1, ack(m, n - 1));
+}
+
+fn main() io {
+    io::println(str(static ack(2, 3)));
+}

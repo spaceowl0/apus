@@ -1,0 +1,12 @@
+// run: "3 4\n" => "25 7 12\n"
+// run: "0 9\n" => "81 9 0\n"
+pure fn sq(x: i64) -> i64 { return x * x; }
+fn hyp2(a: i64, b: i64) -> i64 { return sq(a) + sq(b); }
+fn lin(a: i64, b: i64) -> i64 { return a + b; }
+fn mul(a: i64, b: i64) -> i64 { return a * b; }
+
+fn main() io {
+    let a = io::read_i64();
+    let b = io::read_i64();
+    io::println(str(hyp2(a, b)) ++ " " ++ str(lin(a, b)) ++ " " ++ str(mul(a, b)));
+}

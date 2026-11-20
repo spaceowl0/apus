@@ -1,0 +1,16 @@
+// run: "3\n" => "ok 3\n"
+// run: "99\n" => "ok 4\n"
+// arena: Frame 3080
+arena Frame(4096);
+
+struct Packet { id: u16, payload: [u8; 512] }
+
+fn main() io {
+    let count = io::read_u32();
+    let n = clamp(count, 0, 4);
+    region Frame {
+        let pkts = alloc(Frame, n as u64 * sizeof(Packet));
+        let scratch = alloc(Frame, 1024);
+        io::println("ok " ++ str(n));
+    }
+}

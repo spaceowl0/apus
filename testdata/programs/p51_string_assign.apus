@@ -1,0 +1,16 @@
+// run: "0\n" => "small|small|small|0\n"
+// run: "1\n" => "n=0|small|n=0|1\n"
+// run: "5\n" => "n=4|small|n=4|5\n"
+// run: "20\n" => "big|small|big|20\n"
+fn main() io {
+    let n = io::read_u32();
+    let mut msg: Str<16> = "small";
+    let before = msg;
+    if n > 10 { msg = "big"; }
+    let mut i: u32 = 0;
+    while i < n && n < 6 bound(5) { msg = "n=" ++ str(i); i += 1; }
+    let mut same: Str<16> = msg;
+    if n > 0 { same = same; }
+    if msg == "big" { same = msg; }
+    io::println(msg ++ "|" ++ before ++ "|" ++ same ++ "|" ++ str(n));
+}

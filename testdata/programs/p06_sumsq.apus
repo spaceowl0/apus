@@ -1,0 +1,7 @@
+// run: "" => "sum of squares = 285\n"
+// insts<=2
+fn main() io {
+    let mut total = 0;
+    for i in 0..10 { total += i * i; }
+    io::println("sum of squares = " ++ str(total));
+}

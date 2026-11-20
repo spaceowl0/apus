@@ -1,0 +1,10 @@
+// run: "200\n" => "200\n-1\n"
+// run: "300\n" => "" trap=arithmetic overflow
+// run: "3000000000\n" => "" trap=arithmetic overflow
+fn main() io {
+    let x = io::read_u32();
+    let y = x as u8;
+    io::println(str(y));
+    let z = x as i32;
+    io::println(str(z - 201));
+}

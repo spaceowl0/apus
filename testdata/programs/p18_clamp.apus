@@ -1,0 +1,9 @@
+// run: "100\n" => "10\n5\n100\n"
+// run: "-100\n" => "-10\n-100\n-5\n"
+// run: "7\n" => "7\n5\n7\n"
+fn main() io {
+    let x = io::read_i32();
+    io::println(str(clamp(x, -10, 10)));
+    io::println(str(min(x, 5)));
+    io::println(str(max(x, -5)));
+}

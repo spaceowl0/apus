@@ -1,0 +1,20 @@
+// run: "0\n" => "true/false/false/false/false\ntrue:0\nfalse:1\ntrue:2\nfalsetrue\n"
+// run: "3\n" => "true/false/true/true/false\nfalse:0\ntrue:1\nfalse:2\ntruefalse\n"
+// run: "12\n" => "true/false/false/true/true\ntrue:0\nfalse:1\ntrue:2\nfalsefalse\n"
+struct Flags { on: bool, big: bool }
+
+fn parity(n: u32) -> bool { return n % 2 == 0; }
+
+fn main() io {
+    let n = io::read_u32();
+    let f = Flags { on: n > 0, big: n > 9 };
+    let mut acc: Str<64> = "";
+    let mut i: u32 = 0;
+    let mut line = str(true) ++ "/" ++ str(false) ++ "/" ++ str(n == 3) ++ "/" ++ str(f.on) ++ "/" ++ str(f.big);
+    io::println(line);
+    while i < 3 bound(3) {
+        io::println(str(parity(n + i)) ++ ":" ++ str(i));
+        i += 1;
+    }
+    io::println(str(n < 5 && n > 1) ++ str(!f.on));
+}

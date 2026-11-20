@@ -1,0 +1,12 @@
+// run: "" => "done\n"
+// arena: Pool 512
+arena Pool(1024);
+
+fn main() io {
+    for i in 0..10 {
+        region Pool {
+            let p = alloc(Pool, 512);
+        }
+    }
+    io::println("done");
+}

@@ -1,0 +1,21 @@
+// run: "" => "port=8080 next=8081 ratio=3 bad=0\n"
+// insts<=2
+// A tiny parser that runs inside the compiler: the constants below are computed
+// while compiling, so the binary contains only the final text.
+pure fn parse_u32(s: Str<16>) -> u32 {
+    let mut n: u32 = 0;
+    for i in 0..len(s) {
+        let d = s[i as u64];
+        if d < 48 || d > 57 { return 0; }
+        n = n * 10 + (d - 48) as u32;
+    }
+    return n;
+}
+
+const PORT: u32 = parse_u32("8080");
+const RATIO: u32 = parse_u32("3");
+const BAD: u32 = parse_u32("12x4");
+
+fn main() io {
+    io::println("port=" ++ str(PORT) ++ " next=" ++ str(PORT + 1) ++ " ratio=" ++ str(RATIO) ++ " bad=" ++ str(BAD));
+}

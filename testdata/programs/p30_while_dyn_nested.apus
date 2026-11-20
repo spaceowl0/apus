@@ -1,0 +1,17 @@
+// run: "5\n" => "10\n"
+// run: "0\n" => "0\n"
+// run: "20\n" => "190\n"
+fn main() io {
+    let n = clamp(io::read_u32(), 0, 20);
+    let mut i: u32 = 0;
+    let mut pairs: u32 = 0;
+    while i < n bound(20) {
+        let mut j: u32 = 0;
+        while j < i bound(20) {
+            pairs += 1;
+            j += 1;
+        }
+        i += 1;
+    }
+    io::println(str(pairs));
+}

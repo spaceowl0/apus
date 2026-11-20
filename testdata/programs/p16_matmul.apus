@@ -1,0 +1,18 @@
+// run: "" => "261\n"
+// insts<=2
+pure fn trace_of_square() -> i32 {
+    let a = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+    let mut t = 0;
+    for i in 0..3 {
+        for j in 0..3 {
+            let mut s = 0;
+            for k in 0..3 { s += a[i][k] * a[k][j]; }
+            if i == j { t += s; }
+        }
+    }
+    return t;
+}
+
+fn main() io {
+    io::println(str(static trace_of_square()));
+}

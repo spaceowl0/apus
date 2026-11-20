@@ -1,0 +1,20 @@
+// run: "1 2 2\n" => "g=0 0 0 0 0 6 0 0 0 | read=6 | p=3,4 | q=0,0\n"
+// run: "2 0 0\n" => "g=0 0 0 0 0 0 6 0 0 | read=6 | p=3,4 | q=3,4\n"
+// run: "0 3 1\n" => "" trap=index out of bounds
+// run: "3 0 1\n" => "" trap=index out of bounds
+// run: "1 1 7\n" => "" trap=index out of bounds
+struct P { x: u32, y: u32 }
+
+fn main() io {
+    let mut g: [[u32; 3]; 3] = [[0; 3]; 3];
+    let i = io::read_u32();
+    let j = io::read_u32();
+    g[i as u64][j as u64] = 6;
+    let a = io::read_u32();
+    let mut ps: [P; 3] = [P { x: 0, y: 0 }; 3];
+    ps[a as u64] = P { x: 3, y: 4 };
+    let p = ps[a as u64];
+    let q = ps[0];
+    io::println("g=" ++ str(g[0][0]) ++ " " ++ str(g[0][1]) ++ " " ++ str(g[0][2]) ++ " " ++ str(g[1][0]) ++ " " ++ str(g[1][1]) ++ " " ++ str(g[1][2]) ++ " " ++ str(g[2][0]) ++ " " ++ str(g[2][1]) ++ " " ++ str(g[2][2])
+        ++ " | read=" ++ str(g[i as u64][j as u64]) ++ " | p=" ++ str(p.x) ++ "," ++ str(p.y) ++ " | q=" ++ str(q.x) ++ "," ++ str(q.y));
+}

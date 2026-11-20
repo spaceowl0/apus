@@ -1,0 +1,23 @@
+// run: "7 3\n1\n" => "10 21\n4\n"
+// run: "5 2\n9\n" => "7 10\n2\n"
+// run: "7 0\n3\n" => "7 0\n" trap=division by zero
+// run: "7 0\n0\n" => "7 0\n7\n"
+enum Op { Add, Sub, Mul, Div }
+
+pure fn apply(op: Op, a: i32, b: i32) -> i32 {
+    return match op {
+        Op::Add => a + b,
+        Op::Sub => a - b,
+        Op::Mul => a * b,
+        Op::Div => a / b,
+    };
+}
+
+fn main() io {
+    let x = io::read_i32();
+    let y = io::read_i32();
+    io::println(str(apply(Op::Add, x, y)) ++ " " ++ str(apply(Op::Mul, x, y)));
+    let code = clamp(io::read_i32(), 0, 3);
+    let op = match code { 0 => Op::Add, 1 => Op::Sub, 2 => Op::Mul, _ => Op::Div };
+    io::println(str(apply(op, x, y)));
+}

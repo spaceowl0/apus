@@ -1,0 +1,12 @@
+// run: "0\n" => "bytes=22 checksum=2003\ndata[k]=72\n"
+// run: "1\n" => "bytes=22 checksum=2003\ndata[k]=101\n"
+// run: "99\n" => "bytes=22 checksum=2003\ndata[k]=108\n"
+// insts<=8
+fn main() io {
+    let data = embed("data/greeting.txt");
+    let mut sum: u32 = 0;
+    for i in 0..len(data) { sum += data[i] as u32; }
+    io::println("bytes=" ++ str(len(data)) ++ " checksum=" ++ str(sum));
+    let k = clamp(io::read_u32(), 0, 3);
+    io::println("data[k]=" ++ str(data[k as u64]));
+}

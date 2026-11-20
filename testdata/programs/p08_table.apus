@@ -1,0 +1,16 @@
+// run: "255\n" => "8\n8\n"
+// run: "0\n" => "0\n8\n"
+// run: "7\n" => "3\n8\n"
+// run: "170\n" => "4\n8\n"
+// run: "256\n" => "" trap=require failed
+const POP: [u8; 16] = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4];
+
+pure fn popcount8(x: u8) -> u32 {
+    return POP[(x & 15) as u64] as u32 + POP[(x >> 4) as u64] as u32;
+}
+
+fn main() io {
+    let v = require(io::read_u32(), 0, 255);
+    io::println(str(popcount8(v as u8)));
+    io::println(str(static popcount8(255)));
+}

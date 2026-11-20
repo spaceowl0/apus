@@ -1,0 +1,17 @@
+// run: "3 1 2 0\n" => "0\n1\n2\n3\n"
+// run: "-5 7 7 -9\n" => "-9\n-5\n7\n7\n"
+// run: "1 2 3 4\n" => "1\n2\n3\n4\n"
+fn main() io {
+    let mut a = [0; 4];
+    for i in 0..4 { a[i] = io::read_i32(); }
+    for pass in 0..3 {
+        for j in 0..3 {
+            if a[j] > a[j + 1] {
+                let t = a[j];
+                a[j] = a[j + 1];
+                a[j + 1] = t;
+            }
+        }
+    }
+    for i in 0..4 { io::println(str(a[i])); }
+}

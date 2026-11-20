@@ -1,0 +1,14 @@
+// run: "17 5\n" => "sum=22\ndiff=12\nprod=85\ndiv=3\nrem=2\n"
+// run: "5 17\n" => "sum=22\ndiff=-12\nprod=85\ndiv=0\nrem=5\n"
+// run: "4294967295 4294967295\n" => "sum=8589934590\ndiff=0\nprod=18446744065119617025\ndiv=1\nrem=0\n"
+// run: "1 0\n" => "sum=1\ndiff=1\nprod=0\n" trap=division by zero
+// run: "4294967296 1\n" => "" trap=invalid input
+fn main() io {
+    let a = io::read_u32();
+    let b = io::read_u32();
+    io::println("sum=" ++ str(a as u64 + b as u64));
+    io::println("diff=" ++ str(a as i64 - b as i64));
+    io::println("prod=" ++ str(a as u64 * b as u64));
+    io::println("div=" ++ str(a / b));
+    io::println("rem=" ++ str(a % b));
+}

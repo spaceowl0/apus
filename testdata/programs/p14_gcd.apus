@@ -1,0 +1,21 @@
+// run: "48 18\n" => "6\n"
+// run: "17 5\n" => "1\n"
+// run: "0 5\n" => "5\n"
+// run: "5 0\n" => "5\n"
+// run: "1071 462\n" => "21\n"
+fn gcd(a0: u32, b0: u32) -> u32 {
+    let mut a = a0;
+    let mut b = b0;
+    while b != 0 bound(64) {
+        let t = a % b;
+        a = b;
+        b = t;
+    }
+    return a;
+}
+
+fn main() io {
+    let a = io::read_u32();
+    let b = io::read_u32();
+    io::println(str(gcd(a, b)));
+}

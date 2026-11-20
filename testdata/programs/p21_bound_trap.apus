@@ -1,0 +1,9 @@
+// run: "3\n" => "3\n"
+// run: "5\n" => "5\n"
+// run: "6\n" => "" trap=loop bound exceeded
+fn main() io {
+    let n = io::read_u32();
+    let mut i: u32 = 0;
+    while i < n bound(5) { i += 1; }
+    io::println(str(i));
+}

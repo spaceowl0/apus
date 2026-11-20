@@ -1,0 +1,32 @@
+// run: "10 30\n" => "27\n7\n64 17\n"
+// run: "20 10\n" => "48\n7\n25 10\n"
+// run: "0 0\n" => "0\n7\n0 0\n"
+// run: "5 4\n" => "7\n7\n4 4\n"
+fn main() io {
+    let n = clamp(io::read_u32(), 0, 20);
+    let mut sum: u32 = 0;
+    for i in 0..n {
+        if i % 3 == 0 { continue; }
+        if sum > 40 { break; }
+        sum += i;
+    }
+    io::println(str(sum));
+
+    let mut k = 0;
+    for j in 0..100 {
+        if j * j > 50 { break; }
+        k = j;
+    }
+    io::println(str(k));
+
+    let lim = clamp(io::read_u32(), 0, 30);
+    let mut c: u32 = 0;
+    let mut t: u32 = 0;
+    while c < lim bound(30) {
+        c += 1;
+        if c % 2 == 0 { continue; }
+        if c > 15 { break; }
+        t += c;
+    }
+    io::println(str(t) ++ " " ++ str(c));
+}

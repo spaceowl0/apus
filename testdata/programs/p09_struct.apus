@@ -1,0 +1,16 @@
+// run: "4 6\n" => "25\n"
+// run: "1 2\n" => "0\n"
+// run: "100000 0\n" => "" trap=arithmetic overflow
+struct P { x: i32, y: i32 }
+
+pure fn dist2(a: P, b: P) -> i32 {
+    let dx = a.x - b.x;
+    let dy = a.y - b.y;
+    return dx * dx + dy * dy;
+}
+
+fn main() io {
+    let a = P { x: 1, y: 2 };
+    let b = P { x: io::read_i32(), y: io::read_i32() };
+    io::println(str(dist2(a, b)));
+}

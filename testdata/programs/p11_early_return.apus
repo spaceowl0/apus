@@ -1,0 +1,17 @@
+// run: "-3\n" => "-1\n-1\n"
+// run: "0\n" => "0\n0\n"
+// run: "5\n" => "1\n2\n"
+// run: "50\n" => "2\n2\n"
+// run: "1073741824\n" => "2\n" trap=arithmetic overflow
+fn classify(x: i32) -> i32 {
+    if x < 0 { return -1; }
+    if x == 0 { return 0; }
+    if x < 10 { return 1; }
+    return 2;
+}
+
+fn main() io {
+    let x = io::read_i32();
+    io::println(str(classify(x)));
+    io::println(str(classify(x * 2)));
+}

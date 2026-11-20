@@ -1,0 +1,22 @@
+// run: "10\n" => "fib(10) = 55\n"
+// run: "50\n" => "fib(50) = 12586269025\n"
+// run: "92\n" => "fib(92) = 7540113804746346429\n"
+// run: "0\n" => "fib(0) = 0\n"
+// run: "93\n" => "" trap=require failed
+fn fibit(n: u32 in 0..=92) -> u64 {
+    let mut a: u64 = 0;
+    let mut b: u64 = 1;
+    let mut i: u32 = 0;
+    while i < n bound(92) {
+        let t = a + b;
+        a = b;
+        b = t;
+        i += 1;
+    }
+    return a;
+}
+
+fn main() io {
+    let n = require(io::read_u32(), 0, 92);
+    io::println("fib(" ++ str(n) ++ ") = " ++ str(fibit(n)));
+}

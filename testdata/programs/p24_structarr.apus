@@ -1,0 +1,15 @@
+// run: "10 60 70 20\n" => "160/4 hi=2 lo=2\n"
+// run: "200 200 200 200\n" => "400/4 hi=4 lo=0\n"
+// run: "0 0 0 0\n" => "0/4 hi=0 lo=4\n"
+struct Acc { total: u32, count: u32, hist: [u32; 4] }
+
+fn main() io {
+    let mut acc = Acc { total: 0, count: 0, hist: [0; 4] };
+    for k in 0..4 {
+        let v = clamp(io::read_u32(), 0, 100);
+        acc.total += v;
+        acc.count += 1;
+        if v >= 50 { acc.hist[1] += 1; } else { acc.hist[0] += 1; }
+    }
+    io::println(str(acc.total) ++ "/" ++ str(acc.count) ++ " hi=" ++ str(acc.hist[1]) ++ " lo=" ++ str(acc.hist[0]));
+}

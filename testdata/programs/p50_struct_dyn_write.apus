@@ -1,0 +1,16 @@
+// run: "1 5 3 7\n" => "x=[0,5,0,7] y=[0,10,0,14] sum=12\n"
+// run: "9 1 1 1\n" => "" trap=index out of bounds
+struct P { x: u32, y: u32 }
+
+fn main() io {
+    let mut ps: [P; 4] = [P { x: 0, y: 0 }; 4];
+    for r in 0..2 {
+        let i = io::read_u32();
+        let v = clamp(io::read_u32(), 0, 100);
+        ps[i as u64].x = v;
+        ps[i as u64].y = v * 2;
+    }
+    let mut sum: u32 = 0;
+    for k in 0..4 { sum += ps[k].x; }
+    io::println("x=[" ++ str(ps[0].x) ++ "," ++ str(ps[1].x) ++ "," ++ str(ps[2].x) ++ "," ++ str(ps[3].x) ++ "] y=[" ++ str(ps[0].y) ++ "," ++ str(ps[1].y) ++ "," ++ str(ps[2].y) ++ "," ++ str(ps[3].y) ++ "] sum=" ++ str(sum));
+}

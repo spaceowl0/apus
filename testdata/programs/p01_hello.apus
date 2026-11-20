@@ -1,0 +1,15 @@
+// run: "World\n" => "[apus-demo v3] Hello, World! 6 apples.\n"
+// run: "\n" => "[apus-demo v3] Hello, ! 6 apples.\n"
+// insts<=5
+const APP: StaticStr = "apus-demo";
+const VERSION: u32 = 1 + 2;
+const DEBUG: bool = false;
+
+fn main() -> i32 io {
+    let name = io::read_line(64);
+    if DEBUG {
+        io::println("debug: got " ++ name);
+    }
+    io::println("[" ++ APP ++ " v" ++ str(VERSION) ++ "] Hello, " ++ name ++ "! " ++ str(2 * 3) ++ " apples.");
+    return 0;
+}

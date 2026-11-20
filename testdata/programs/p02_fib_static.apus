@@ -1,0 +1,10 @@
+// run: "" => "" exit=97
+// insts<=1
+pure fn fib(n: u32) -> u64 bound(rec = 93) {
+    if n < 2 { return n as u64; }
+    return fib(n - 1) + fib(n - 2);
+}
+
+fn main() -> u64 {
+    return static fib(50);
+}

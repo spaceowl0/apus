@@ -1,0 +1,25 @@
+// run: "" => "primes below 100: 25\n"
+// insts<=2
+pure fn count_primes() -> u32 {
+    let mut sieve = [true; 100];
+    sieve[0] = false;
+    sieve[1] = false;
+    for i in 2..100 {
+        if sieve[i] {
+            let mut j = i * i;
+            while j < 100 bound(100) {
+                sieve[j] = false;
+                j += i;
+            }
+        }
+    }
+    let mut c: u32 = 0;
+    for i in 0..100 {
+        if sieve[i] { c += 1; }
+    }
+    return c;
+}
+
+fn main() io {
+    io::println("primes below 100: " ++ str(static count_primes()));
+}

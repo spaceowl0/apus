@@ -1,0 +1,11 @@
+// run: "2\n" => "6 ok\n"
+// run: "9\n" => "9 ok\n"
+struct P { x: u32, y: u32 }
+
+fn main() io {
+    let mut ps: [P; 4] = [P { x: 0, y: 0 }; 4];
+    for i in 0..4 { ps[i].x = i as u32; ps[i].y = i as u32 * 2; }
+    let k = io::read_u32();
+    let j = clamp(k, 0, 3);
+    io::println(str(ps[j as u64].x + ps[j as u64].y) ++ " ok");
+}

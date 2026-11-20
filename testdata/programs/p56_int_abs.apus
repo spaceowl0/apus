@@ -1,0 +1,12 @@
+// run: "-3 -9000000000 -1.5\n" => "3 9000000000 1.500000 7 8 2\n"
+// run: "5 1 1\n" => "5 1 1.000000 7 0 2\n"
+// run: "-2147483648 1 1\n" => "" trap=arithmetic overflow
+fn dist(a: i32, b: i32) -> i32 { return abs(a - b); }
+
+fn main() io {
+    let a = io::read_i32();
+    let b: i64 = io::read_i64();
+    let f = io::read_f64();
+    let k: i8 = abs(-2);
+    io::println(str(abs(a)) ++ " " ++ str(abs(b)) ++ " " ++ str(abs(f)) ++ " " ++ str(abs(-7)) ++ " " ++ str(dist(a, 5)) ++ " " ++ str(k));
+}

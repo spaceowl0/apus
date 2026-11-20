@@ -1,0 +1,14 @@
+// run: "" => "safe\n2\n"
+// insts<=3
+enum Mode { Fast, Safe, Debug }
+const MODE: Mode = Mode::Safe;
+
+fn main() io {
+    match MODE {
+        Mode::Fast => io::println("fast"),
+        Mode::Safe => io::println("safe"),
+        Mode::Debug => io::println("debug"),
+    }
+    let level = match MODE { Mode::Fast => 1, Mode::Safe => 2, Mode::Debug => 3 };
+    io::println(str(level));
+}

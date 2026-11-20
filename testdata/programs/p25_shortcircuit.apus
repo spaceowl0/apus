@@ -1,0 +1,9 @@
+// run: "0\n" => "small\ntiny\n"
+// run: "10\n" => "big\nnot tiny\n"
+// run: "3\n" => "big\ntiny\n"
+// run: "-4\n" => "small\ntiny\n"
+fn main() io {
+    let x = io::read_i32();
+    if x > 0 && 100 / x > 3 { io::println("big"); } else { io::println("small"); }
+    if x <= 0 || 100 / x > 20 { io::println("tiny"); } else { io::println("not tiny"); }
+}

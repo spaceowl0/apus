@@ -1,0 +1,41 @@
+// run: "3 9 4 1 7 5\n7\n20\n50\n82\n27\n" => "4\n5\n1\n"
+// run: "3 9 4 1 7 5\n100\n20\n3\n5\n27\n" => "-1\n-1\n-2\n"
+// run: "1 1 1 1 1 1\n1\n0\n50\n1\n1\n" => "0\n1\n0\n"
+// run: "0 0 0 0 0 9\n9\n1000\n50\n1\n6\n" => "5\n32\n8\n"
+// run: "2 2 2 2 2 2\n5\n24\n50\n1\n27\n" => "-1\n5\n-2\n"
+fn find(a: [i32; 6], x: i32) -> i32 {
+    for i in 0..6 {
+        if a[i] == x { return i; }
+    }
+    return -1;
+}
+
+fn first_over(limit: u32, n: u32) -> i32 {
+    for i in 0..n {
+        if i * i > limit { return i as i32; }
+    }
+    return -1;
+}
+
+fn reach(n0: u64, target: u64) -> i32 {
+    let mut n = n0;
+    let mut steps = 0;
+    while steps < 100 bound(100) {
+        if n == target { return steps; }
+        if n == 1 { return -1; }
+        if n % 2 == 0 { n = n / 2; } else { n = 3 * n + 1; }
+        steps += 1;
+    }
+    return -2;
+}
+
+fn main() io {
+    let a = [io::read_i32(), io::read_i32(), io::read_i32(), io::read_i32(), io::read_i32(), io::read_i32()];
+    let x = io::read_i32();
+    io::println(str(find(a, x)));
+    let lim = io::read_u32();
+    let n = clamp(io::read_u32(), 0, 50);
+    io::println(str(first_over(lim, n)));
+    let t = io::read_u64();
+    io::println(str(reach(io::read_u64(), t)));
+}

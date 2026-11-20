@@ -1,0 +1,19 @@
+// run: "27\n" => "111\n"
+// run: "1\n" => "0\n"
+// run: "6\n" => "8\n"
+// run: "97\n" => "118\n"
+// run: "0\n" => "" trap=require failed
+fn collatz_steps(n0: u64) -> u32 {
+    let mut n = n0;
+    let mut steps: u32 = 0;
+    while n != 1 bound(1000) {
+        if n % 2 == 0 { n = n / 2; } else { n = 3 * n + 1; }
+        steps += 1;
+    }
+    return steps;
+}
+
+fn main() io {
+    let n = io::read_u64();
+    io::println(str(collatz_steps(require(n, 1, 1000000))));
+}
